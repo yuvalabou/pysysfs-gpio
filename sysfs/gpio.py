@@ -12,32 +12,31 @@ __all__ = (
 )
 
 import errno
+import logging
 import os
 import select
 
-from twisted.internet import reactor
 from const import (
-    SYSFS_EXPORT_PATH,
-    SYSFS_UNEXPORT_PATH,
-    SYSFS_GPIO_PATH,
-    SYSFS_GPIO_DIRECTION_PATH,
-    SYSFS_GPIO_EDGE_PATH,
-    SYSFS_GPIO_VALUE_PATH,
-    SYSFS_GPIO_ACTIVE_LOW_PATH,
-    SYSFS_GPIO_VALUE_LOW,
-    SYSFS_GPIO_VALUE_HIGH,
-    EPOLL_TIMEOUT,
-    INPUT,
-    OUTPUT,
-    RISING,
-    FALLING,
+    ACTIVE_LOW_MODES,
     BOTH,
     DIRECTIONS,
     EDGES,
-    ACTIVE_LOW_MODES,
+    EPOLL_TIMEOUT,
+    FALLING,
+    INPUT,
+    OUTPUT,
+    RISING,
+    SYSFS_EXPORT_PATH,
+    SYSFS_GPIO_ACTIVE_LOW_PATH,
+    SYSFS_GPIO_DIRECTION_PATH,
+    SYSFS_GPIO_EDGE_PATH,
+    SYSFS_GPIO_PATH,
+    SYSFS_GPIO_VALUE_HIGH,
+    SYSFS_GPIO_VALUE_LOW,
+    SYSFS_GPIO_VALUE_PATH,
+    SYSFS_UNEXPORT_PATH,
 )
-
-import logging
+from twisted.internet import reactor
 
 Logger = logging.getLogger("sysfs.gpio")
 Logger.addHandler(logging.StreamHandler())
@@ -45,24 +44,20 @@ Logger.setLevel(logging.DEBUG)
 
 
 class Pin(object):
-    """
-    Represent a pin in SysFS
-    """
+    """Represent a pin in SysFS."""
 
-    def __init__(self, number, direction, callback=None, edge=None, active_low=0):
+    def __init__(self, number: int, direction, callback=None, edge=None, active_low=0):
         """
-        @type  number: int
-        @param number: The pin number
         @type  direction: int
         @param direction: Pin direction, enumerated by C{Direction}
         @type  callback: callable
         @param callback: Method be called when pin changes state
         @type  edge: int
-        @param edge: The edge transition that triggers callback,
-                     enumerated by C{Edge}
+        @param edge:
+            The edge transition that triggers callback, enumerated by C{Edge}
         @type active_low: int
-        @param active_low: Indicator of whether this pin uses inverted
-                           logic for HIGH-LOW transitions.
+        @param active_low:
+            Indicator of whether this pin uses inverted logic for HIGH-LOW transitions.
         """
         self._number = number
         self._direction = direction
@@ -91,118 +86,72 @@ class Pin(object):
 
     @property
     def callback(self):
-        """
-        Gets this pin callback
-        """
+        """Gets this pin callback."""
         return self._callback
 
     @callback.setter
     def callback(self, value):
-        """
-        Sets this pin callback
-        """
+        """Sets this pin callback."""
         self._callback = value
 
     @property
     def direction(self):
-        """
-        Pin direction
-        """
+        """Pin direction."""
         return self._direction
 
     @property
-    def number(self):
-        """
-        Pin number
-        """
+    def number(self) -> int:
+        """Pin number."""
         return self._number
 
     @property
     def active_low(self):
-        """
-        Pin number
-        """
+        """Active low."""
         return self._active_low
 
     def set(self):
-        """
-        Set pin to HIGH logic setLevel
-        """
+        """Set pin to HIGH logic setLevel."""
         self._fd.write(SYSFS_GPIO_VALUE_HIGH)
         self._fd.seek(0)
 
     def reset(self):
-        """
-        Set pin to LOW logic setLevel
-        """
+        """Set pin to LOW logic setLevel."""
         self._fd.write(SYSFS_GPIO_VALUE_LOW)
         self._fd.seek(0)
 
-    def read(self):
-        """
-        Read pin value
-
-        @rtype: int
-        @return: I{0} when LOW, I{1} when HIGH
-        """
+    def read(self) -> int:
+        """Read pin value."""
         val = self._fd.read()
         self._fd.seek(0)
         return int(val)
 
-    def fileno(self):
-        """
-        Get the file descriptor associated with this pin.
-
-        @rtype: int
-        @return: File descriptor
-        """
+    def fileno(self) -> int:
+        """Get the file descriptor associated with this pin."""
         return self._fd.fileno()
 
     def changed(self, state):
         if callable(self._callback):
             self._callback(self.number, state)
 
-    def _sysfs_gpio_value_path(self):
-        """
-        Get the file that represent the value of this pin.
-
-        @rtype: str
-        @return: the path to sysfs value file
-        """
+    def _sysfs_gpio_value_path(self) -> str:
+        """Get the file that represent the value of this pin."""
         return SYSFS_GPIO_VALUE_PATH % self.number
 
-    def _sysfs_gpio_direction_path(self):
-        """
-        Get the file that represent the direction of this pin.
-
-        @rtype: str
-        @return: the path to sysfs direction file
-        """
+    def _sysfs_gpio_direction_path(self) -> str:
+        """Get the file that represent the direction of this pin."""
         return SYSFS_GPIO_DIRECTION_PATH % self.number
 
-    def _sysfs_gpio_edge_path(self):
-        """
-        Get the file that represent the edge that will trigger an interrupt.
-
-        @rtype: str
-        @return: the path to sysfs edge file
-        """
+    def _sysfs_gpio_edge_path(self) -> str:
+        """Get the file that represent the edge that will trigger an interrupt."""
         return SYSFS_GPIO_EDGE_PATH % self.number
 
-    def _sysfs_gpio_active_low_path(self):
-        """
-        Get the file that represents the active_low setting for this pin.
-
-        @rtype: str
-        @return: the path to sysfs active_low file
-        """
+    def _sysfs_gpio_active_low_path(self) -> str:
+        """Get the file that represents the active_low setting for this pin."""
         return SYSFS_GPIO_ACTIVE_LOW_PATH % self.number
 
 
 class Controller(object):
-    """
-    A singleton class to provide access to SysFS GPIO pins
-    """
+    """A singleton class to provide access to SysFS GPIO pins."""
 
     def __new__(cls, *args, **kw):
         if not hasattr(cls, "_instance"):
@@ -255,7 +204,7 @@ class Controller(object):
         for pin in values:
             self.dealloc_pin(pin.number)
 
-    def alloc_pin(self, number, direction, callback=None, edge=None, active_low=0):
+    def alloc_pin(self, number: int, direction, callback=None, edge=None, active_low=0):
 
         Logger.debug(
             "SysfsGPIO: alloc_pin(%d, %s, %s, %s, %s)"
@@ -357,9 +306,7 @@ class Controller(object):
     """ Private Methods """
 
     def _poll_queue_event(self, events):
-        """
-        EPoll event callback
-        """
+        """EPoll event callback."""
 
         for fd, event in events:
             if not (event & (select.EPOLLPRI | select.EPOLLET)):
@@ -373,27 +320,13 @@ class Controller(object):
                 if pin.fileno() == fd:
                     pin.changed(pin.read())
 
-    def _check_pin_already_exported(self, number):
-        """
-        Check if this pin was already exported on sysfs.
-
-        @type  number: int
-        @param number: Pin number
-        @rtype: bool
-        @return: C{True} when it's already exported, otherwise C{False}
-        """
+    def _check_pin_already_exported(self, number: int) -> bool:
+        """Check if this pin was already exported on sysfs."""
         gpio_path = SYSFS_GPIO_PATH % number
         return os.path.isdir(gpio_path)
 
-    def _check_pin_validity(self, number):
-        """
-        Check if pin number exists on this bus
-
-        @type  number: int
-        @param number: Pin number
-        @rtype: bool
-        @return: C{True} when valid, otherwise C{False}
-        """
+    def _check_pin_validity(self, number: int) -> bool:
+        """Check if pin number exists on this bus."""
 
         if number not in self._available_pins:
             raise Exception("Pin number out of range")
