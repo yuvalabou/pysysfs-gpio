@@ -9,15 +9,15 @@ As this package relies on modern techniques provided by Linux kernel, so your ke
 
 ## Package Requirements
 
-This package is based on Twisted main loop. To build the package you will also
-need setuptools.
+This package is based on Twisted main loop.
+To build the package you will also need setuptools.
 
 ## How to use it
 
-1. Download this repository
+1. Clone this repository
 
 ```shell
-    git clone https://github.com/derekstavis/python-sysfs-gpio.git
+    git clone https://github.com/yuvalabou/pysysfs-gpio
 ```
 
 2. Inside it, issue:
@@ -31,34 +31,35 @@ need setuptools.
 ```python
 
     # Import Twisted mainloop
-    
+
     from twisted.internet import reactor
-    
+
     # Import this package objects
-    
-    from sysfs.gpio import Controller, OUTPUT, INPUT, RISING
-    
+
+    from sysfs.gpio import Controller
+    from sysfs.const import OUTPUT, INPUT, RISING
+
     # Refer to your chip GPIO numbers and set them this way
-    
+
     Controller.available_pins = [1, 2, 3, 4]
-    
+
     # Allocate a pin as Output signal
-    
+
     pin = Controller.alloc_pin(1, OUTPUT)
     pin.set()   # Sets pin to high logic level
     pin.reset() # Sets pin to low logic level
     pin.read()  # Reads pin logic level
-    
+
     # Allocate a pin as simple Input signal
-    
+
     pin = Controller.alloc_pin(1, INPUT)
     pin.read()  # Reads pin logic level
-    
+
     # Allocate a pin as level triggered Input signal
-    
+
     def pin_changed(number, state):
         print("Pin '%d' changed to %d state" % (number, state))
-    
+
     pin = Controller.alloc_pin(1, INPUT, pin_changed, RISING)
     pin.read()  # Reads pin logic level
 
@@ -73,6 +74,6 @@ need setuptools.
 
 ## Contributing
 
-If you think that there's work that can be done to make this module better 
+If you think that there's work that can be done to make this module better
 (and that's the only certainty), fork this repo, make some changes and create
 a pull request. I will be glad to accept it! :)
