@@ -1,0 +1,33 @@
+"""Sysfs constants"""
+
+SYSFS_BASE_PATH     = '/sys/class/gpio'
+
+SYSFS_EXPORT_PATH   = SYSFS_BASE_PATH + '/export'
+SYSFS_UNEXPORT_PATH = SYSFS_BASE_PATH + '/unexport'
+
+SYSFS_GPIO_PATH           = SYSFS_BASE_PATH + '/gpio%d'
+SYSFS_GPIO_DIRECTION_PATH = SYSFS_GPIO_PATH + '/direction'
+SYSFS_GPIO_EDGE_PATH      = SYSFS_GPIO_PATH + '/edge'
+SYSFS_GPIO_VALUE_PATH     = SYSFS_GPIO_PATH + '/value'
+SYSFS_GPIO_ACTIVE_LOW_PATH = SYSFS_GPIO_PATH + '/active_low'
+
+SYSFS_GPIO_VALUE_LOW   = '0'
+SYSFS_GPIO_VALUE_HIGH  = '1'
+
+EPOLL_TIMEOUT = 1  # second
+
+# Public interface
+
+INPUT   = 'in'
+OUTPUT  = 'out'
+
+RISING  = 'rising'
+FALLING = 'falling'
+BOTH    = 'both'
+
+ACTIVE_LOW_ON = 1
+ACTIVE_LOW_OFF = 0
+
+DIRECTIONS = (INPUT, OUTPUT)
+EDGES = (RISING, FALLING, BOTH)
+ACTIVE_LOW_MODES = (ACTIVE_LOW_ON, ACTIVE_LOW_OFF)
