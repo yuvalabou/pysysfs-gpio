@@ -88,7 +88,7 @@ class Controller(object):
             self.dealloc_pin(pin.number)
 
     def alloc_pin(
-        self, number: int, direction: str, callback=None, edge=None, active_low=0
+        self, number: int, direction: str, callback=None, edge=None, active_low=False
     ):
 
         Logger.debug(
@@ -142,13 +142,13 @@ class Controller(object):
 
         del pin, self._allocated_pins[number]
 
-    def get_pin(self, number):
+    def get_pin(self, number: int):
 
         Logger.debug("SysfsGPIO: get_pin(%d)" % number)
 
         return self._allocated_pins[number]
 
-    def set_pin(self, number):
+    def set_pin(self, number: int):
 
         Logger.debug("SysfsGPIO: set_pin(%d)" % number)
 
@@ -157,7 +157,7 @@ class Controller(object):
 
         return self._allocated_pins[number].set()
 
-    def reset_pin(self, number):
+    def reset_pin(self, number: int):
 
         Logger.debug("SysfsGPIO: reset_pin(%d)" % number)
 
@@ -166,7 +166,7 @@ class Controller(object):
 
         return self._allocated_pins[number].reset()
 
-    def get_pin_state(self, number):
+    def get_pin_state(self, number: int) -> bool:
 
         Logger.debug("SysfsGPIO: get_pin_state(%d)" % number)
 
@@ -210,7 +210,7 @@ class Controller(object):
         gpio_path = SYSFS_GPIO_PATH % number
         return os.path.isdir(gpio_path)
 
-    def _check_pin_validity(self, number: int) -> bool:
+    def _check_pin_validity(self, number: int):
         """Check if pin number exists on this bus."""
 
         if number not in self._available_pins:
@@ -218,6 +218,10 @@ class Controller(object):
 
         if number in self._allocated_pins:
             raise Exception("Pin already allocated")
+
+
+# Initialize the controller
+controller = Controller()
 
 
 if __name__ == "__main__":

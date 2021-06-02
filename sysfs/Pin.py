@@ -21,7 +21,7 @@ class Pin(object):
     """Represent a pin in SysFS."""
 
     def __init__(
-        self, number: int, direction: int, callback=None, edge=None, active_low=0
+        self, number: int, direction: int, callback=None, edge=None, active_low=False
     ) -> None:
         """
         @type  callback: callable
@@ -29,9 +29,6 @@ class Pin(object):
         @type  edge: int
         @param edge:
             The edge transition that triggers callback, enumerated by C{Edge}
-        @type active_low: int
-        @param active_low:
-            Indicator of whether this pin uses inverted logic for HIGH-LOW transitions.
         """
         self._number = number
         self._direction = direction
@@ -53,10 +50,10 @@ class Pin(object):
         if active_low:
             if active_low not in ACTIVE_LOW_MODES:
                 raise Exception(
-                    "You must supply a value for active_low which is either 0 or 1."
+                    "You must supply a value for active_low which is either True or False."
                 )
             with open(self._sysfs_gpio_active_low_path(), "w") as fsactive_low:
-                fsactive_low.write(str(active_low))
+                fsactive_low.write(str(int(active_low)))
 
     @property
     def callback(self):
@@ -83,12 +80,12 @@ class Pin(object):
         """Active low."""
         return self._active_low
 
-    def set(self):
+    def high(self):
         """Set pin to HIGH logic setLevel."""
         self._fd.write(SYSFS_GPIO_VALUE_HIGH)
         self._fd.seek(0)
 
-    def reset(self):
+    def low(self):
         """Set pin to LOW logic setLevel."""
         self._fd.write(SYSFS_GPIO_VALUE_LOW)
         self._fd.seek(0)

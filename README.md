@@ -37,16 +37,13 @@ To build the package you will also need setuptools.
     from sysfs import Controller
     from sysfs.const import OUTPUT, INPUT, RISING
 
-    # Initialize the controller
-    controller = Controller()
-
-    # Refer to your chip GPIO numbers and set them this way
+    # Refer to your chip GPIO numbers and set them this way - or referance your board from boards.py
     Controller.available_pins = [1, 2, 3, 4]
 
     # Allocate a pin as Output signal
     pin = Controller.alloc_pin(1, OUTPUT)
-    pin.set()   # Sets pin to high logic level
-    pin.reset() # Sets pin to low logic level
+    pin.high()   # Sets pin to high logic level
+    pin.low() # Sets pin to low logic level
     pin.read()  # Reads pin logic level
 
     # Allocate a pin as simple Input signal
