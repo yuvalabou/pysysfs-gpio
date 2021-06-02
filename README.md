@@ -23,7 +23,7 @@ To build the package you will also need setuptools.
 2. Inside it, issue:
 
 ```shell
-    sudo python setup.py install
+    python3 setup.py install
 ```
 
 3. On your code:
@@ -31,32 +31,29 @@ To build the package you will also need setuptools.
 ```python
 
     # Import Twisted mainloop
-
     from twisted.internet import reactor
 
     # Import this package objects
-
-    from sysfs.gpio import Controller
+    from sysfs import Controller
     from sysfs.const import OUTPUT, INPUT, RISING
 
-    # Refer to your chip GPIO numbers and set them this way
+    # Initialize the controller
+    controller = Controller()
 
+    # Refer to your chip GPIO numbers and set them this way
     Controller.available_pins = [1, 2, 3, 4]
 
     # Allocate a pin as Output signal
-
     pin = Controller.alloc_pin(1, OUTPUT)
     pin.set()   # Sets pin to high logic level
     pin.reset() # Sets pin to low logic level
     pin.read()  # Reads pin logic level
 
     # Allocate a pin as simple Input signal
-
     pin = Controller.alloc_pin(1, INPUT)
     pin.read()  # Reads pin logic level
 
     # Allocate a pin as level triggered Input signal
-
     def pin_changed(number, state):
         print("Pin '%d' changed to %d state" % (number, state))
 
