@@ -26,10 +26,9 @@ To build the package you will also need setuptools.
     python3 setup.py install
 ```
 
-3. On your code:
+3. In your code:
 
 ```python
-
     # Import Twisted mainloop
     from twisted.internet import reactor
 
@@ -56,6 +55,7 @@ To build the package you will also need setuptools.
 
     pin = Controller.alloc_pin(1, INPUT, pin_changed, RISING)
     pin.read()  # Reads pin logic level
+
 
 ```
 

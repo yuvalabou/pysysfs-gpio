@@ -1,28 +1,26 @@
-#/usr/bin/env python
-
-'''The setup and build script for the SysFS GPIO project.'''
-
-from setuptools import setup, find_packages
-
-__name__         = 'sysfs-gpio'
-__description__  = 'Linux SysFS GPIO Access'
-__author__       = 'Derek Willian Stavis'
-__version__      = '0.2.2'
-__author_email__ = 'dekestavis@gmail.com'
-__author_site__  = 'http://derekstavis.github.io'
-
-requirements = ['Twisted>=13.1.0']
+"""The setup and build script for the SysFS GPIO project."""
+from distutils.core import setup
 
 setup(
-    name                 = __name__,
-    description          = __description__,
-    version              = __version__,
-    author               = __author__,
-    author_email         = __author_email__,
-    url                  = __author_site__,
-
-    install_requires     = requirements,
-    include_package_data = True,
-
-    packages = find_packages(),  # include all packages under src
+  name = 'pysysfs-gpio',
+  packages = ['pysysfs'],
+  version = '0.1',
+  license='MIT',
+  description = 'Linux SysFS GPIO Access',
+  author = 'Yuval Aboulafia',
+  author_email = 'yuval.abou@gmail.com',
+  url = 'https://github.com/yuvalabou/pysysfs-gpio',   # Provide either the link to your github or to your website
+  download_url = 'https://github.com/user/reponame/archive/v_01.tar.gz',    # I explain this later on
+  keywords = ['SOME', 'MEANINGFULL', 'KEYWORDS'],   # Keywords that define your package best
+  install_requires=['Twisted'],
+  classifiers=[
+    'Development Status :: 3 - Alpha',
+    'Intended Audience :: Developers',
+    'Topic :: Software Development :: Build Tools',
+    'License :: OSI Approved :: MIT License',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+  ],
 )
