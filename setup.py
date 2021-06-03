@@ -9,9 +9,9 @@ setup(
   description = 'Linux SysFS GPIO Access',
   author = 'Yuval Aboulafia',
   author_email = 'yuval.abou@gmail.com',
-  url = 'https://github.com/yuvalabou/pysysfs-gpio',   # Provide either the link to your github or to your website
-  download_url = 'https://github.com/user/reponame/archive/v_01.tar.gz',    # I explain this later on
-  keywords = ['SOME', 'MEANINGFULL', 'KEYWORDS'],   # Keywords that define your package best
+  url = 'https://github.com/yuvalabou/pysysfs-gpio',
+  download_url = 'https://github.com/yuvalabou/pysysfs-gpio/archive/refs/tags/0.1.tar.gz',
+  keywords = ['SOME', 'MEANINGFULL', 'KEYWORDS'],
   install_requires=['Twisted'],
   classifiers=[
     'Development Status :: 3 - Alpha',
