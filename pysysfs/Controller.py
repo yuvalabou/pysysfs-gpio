@@ -17,8 +17,8 @@ import os
 import select
 
 from twisted.internet import reactor
-import Pin
-from const import (
+from .Pin import Pin
+from .const import (
     DIRECTIONS,
     EDGES,
     EPOLL_TIMEOUT,
@@ -218,10 +218,6 @@ class Controller(object):
 
         if number in self._allocated_pins:
             raise Exception("Pin already allocated")
-
-
-# Initialize the controller
-controller = Controller()
 
 
 if __name__ == "__main__":

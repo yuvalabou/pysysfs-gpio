@@ -2,7 +2,7 @@
 
 import logging
 
-from const import (
+from .const import (
     ACTIVE_LOW_MODES,
     SYSFS_GPIO_ACTIVE_LOW_PATH,
     SYSFS_GPIO_DIRECTION_PATH,

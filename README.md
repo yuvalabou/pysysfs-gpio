@@ -29,33 +29,32 @@ To build the package you will also need setuptools.
 3. In your code:
 
 ```python
-    # Import Twisted mainloop
-    from twisted.internet import reactor
+# Import Twisted mainloop
+from twisted.internet import reactor
 
-    # Import this package objects
-    from sysfs import Controller
-    from sysfs.const import OUTPUT, INPUT, RISING
+# Import this package objects
+from sysfs import Controller
+from sysfs.const import OUTPUT, INPUT, RISING
 
-    # Refer to your chip GPIO numbers and set them this way - or referance your board from boards.py
-    Controller.available_pins = [1, 2, 3, 4]
+# Refer to your chip GPIO numbers and set them this way - or referance your board from boards.py
+Controller.available_pins = [1, 2, 3, 4]
 
-    # Allocate a pin as Output signal
-    pin = Controller.alloc_pin(1, OUTPUT)
-    pin.high()   # Sets pin to high logic level
-    pin.low() # Sets pin to low logic level
-    pin.read()  # Reads pin logic level
+# Allocate a pin as Output signal
+pin = Controller.alloc_pin(1, OUTPUT)
+pin.high()   # Sets pin to high logic level
+pin.low() # Sets pin to low logic level
+pin.read()  # Reads pin logic level
 
-    # Allocate a pin as simple Input signal
-    pin = Controller.alloc_pin(1, INPUT)
-    pin.read()  # Reads pin logic level
+# Allocate a pin as simple Input signal
+pin = Controller.alloc_pin(1, INPUT)
+pin.read()  # Reads pin logic level
 
-    # Allocate a pin as level triggered Input signal
-    def pin_changed(number, state):
-        print("Pin '%d' changed to %d state" % (number, state))
+# Allocate a pin as level triggered Input signal
+def pin_changed(number, state):
+    print("Pin '%d' changed to %d state" % (number, state))
 
-    pin = Controller.alloc_pin(1, INPUT, pin_changed, RISING)
-    pin.read()  # Reads pin logic level
-
+pin = Controller.alloc_pin(1, INPUT, pin_changed, RISING)
+pin.read()  # Reads pin logic level
 
 ```
 
@@ -65,6 +64,36 @@ To build the package you will also need setuptools.
     reactor.run()
 ```
 
+## LED blink example
+
+```python
+from twisted.internet import reactor
+from twisted.internet.task import LoopingCall
+
+from pysysfs.Controller import Controller
+from pysysfs.const import OUTPUT
+from pysysfs.boards import NANOPI_NEO_3
+from time import sleep
+
+controller = Controller()
+
+controller.available_pins = NANOPI_NEO_3
+
+led = controller.alloc_pin(79, OUTPUT)
+
+
+def main():
+    led.high()
+    sleep(1)
+    led.low()
+    sleep(1)
+
+lc = LoopingCall(main)
+lc.start(0.1)
+
+reactor.run()
+
+```
 
 ## Contributing
 
