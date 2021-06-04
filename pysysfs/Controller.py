@@ -13,11 +13,12 @@ __all__ = (
 
 import errno
 import logging
-import os
 import select
+from os import path
+from typing import Callable
 
 from twisted.internet import reactor
-from .Pin import Pin
+
 from .const import (
     DIRECTIONS,
     EDGES,
@@ -27,8 +28,9 @@ from .const import (
     SYSFS_GPIO_PATH,
     SYSFS_UNEXPORT_PATH,
 )
+from .Pin import Pin
 
-Logger = logging.getLogger("sysfs.gpio")
+Logger = logging.getLogger("pysysfs.gpio")
 Logger.addHandler(logging.StreamHandler())
 Logger.setLevel(logging.DEBUG)
 
@@ -41,7 +43,6 @@ class Controller(object):
             instance = super(Controller, cls).__new__(cls)
             instance._allocated_pins = {}
             instance._poll_queue = select.epoll()
-
             instance._available_pins = []
             instance._running = True
 
@@ -88,12 +89,18 @@ class Controller(object):
             self.dealloc_pin(pin.number)
 
     def alloc_pin(
-        self, number: int, direction: str, callback=None, edge=None, active_low=False
-    ):
+        self,
+        number: int,
+        direction: str,
+        callback: Callable = None,
+        interrupt: str = None,
+        active_low: bool = False,
+    ) -> Pin:
+        """Allocate pin."""
 
         Logger.debug(
             "SysfsGPIO: alloc_pin(%d, %s, %s, %s, %s)"
-            % (number, direction, callback, edge, active_low)
+            % (number, direction, callback, interrupt, active_low)
         )
 
         self._check_pin_validity(number)
@@ -101,8 +108,8 @@ class Controller(object):
         if direction not in DIRECTIONS:
             raise Exception("Pin direction %s not in %s" % (direction, DIRECTIONS))
 
-        if callback and edge not in EDGES:
-            raise Exception("Pin edge %s not in %s" % (edge, EDGES))
+        if callback and interrupt not in EDGES:
+            raise Exception("Pin interrupt %s not in %s" % (interrupt, EDGES))
 
         if not self._check_pin_already_exported(number):
             with open(SYSFS_EXPORT_PATH, "w") as export:
@@ -110,7 +117,7 @@ class Controller(object):
         else:
             Logger.debug("SysfsGPIO: Pin %d already exported" % number)
 
-        pin = Pin(number, direction, callback, edge, active_low)
+        pin = Pin(number, direction, callback, interrupt, active_low)
 
         if direction is INPUT:
             self._poll_queue_register_pin(pin)
@@ -126,6 +133,7 @@ class Controller(object):
         self._poll_queue.unregister(pin)
 
     def dealloc_pin(self, number: int):
+        """De-allocate pin."""
 
         Logger.debug("SysfsGPIO: dealloc_pin(%d)" % number)
 
@@ -208,7 +216,7 @@ class Controller(object):
     def _check_pin_already_exported(self, number: int) -> bool:
         """Check if this pin was already exported on sysfs."""
         gpio_path = SYSFS_GPIO_PATH % number
-        return os.path.isdir(gpio_path)
+        return path.isdir(gpio_path)
 
     def _check_pin_validity(self, number: int):
         """Check if pin number exists on this bus."""
@@ -218,7 +226,3 @@ class Controller(object):
 
         if number in self._allocated_pins:
             raise Exception("Pin already allocated")
-
-
-if __name__ == "__main__":
-    print("This module isn't intended to be run directly.")

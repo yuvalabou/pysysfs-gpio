@@ -1,6 +1,7 @@
 """Pin represtation."""
 
 import logging
+from typing import Callable
 
 from .const import (
     ACTIVE_LOW_MODES,
@@ -21,14 +22,16 @@ class Pin(object):
     """Represent a pin in SysFS."""
 
     def __init__(
-        self, number: int, direction: int, callback=None, edge=None, active_low=False
+        self,
+        number: int,
+        direction: str,
+        callback: Callable = None,
+        interrupt: str = None,
+        active_low: bool = False,
     ) -> None:
         """
-        @type  callback: callable
         @param callback: Method be called when pin changes state
-        @type  edge: int
-        @param edge:
-            The edge transition that triggers callback, enumerated by C{Edge}
+        @param interrpt: The edge transition that triggers callback
         """
         self._number = number
         self._direction = direction
@@ -37,23 +40,23 @@ class Pin(object):
 
         self._fd = open(self._sysfs_gpio_value_path(), "r+")
 
-        if callback and not edge:
-            raise Exception("You must supply a edge to trigger callback on")
+        if callback and not interrupt:
+            raise Exception("You must supply an interrupt to trigger callback on")
 
-        with open(self._sysfs_gpio_direction_path(), "w") as fsdir:
-            fsdir.write(direction)
+        with open(self._sysfs_gpio_direction_path(), "w") as fs_dir:
+            fs_dir.write(direction)
 
-        if edge:
-            with open(self._sysfs_gpio_edge_path(), "w") as fsedge:
-                fsedge.write(edge)
+        if interrupt:
+            with open(self._sysfs_gpio_edge_path(), "w") as fs_interrupt:
+                fs_interrupt.write(interrupt)
 
         if active_low:
             if active_low not in ACTIVE_LOW_MODES:
                 raise Exception(
                     "You must supply a value for active_low which is either True or False."
                 )
-            with open(self._sysfs_gpio_active_low_path(), "w") as fsactive_low:
-                fsactive_low.write(str(int(active_low)))
+            with open(self._sysfs_gpio_active_low_path(), "w") as fs_active_low:
+                fs_active_low.write(str(int(active_low)))
 
     @property
     def callback(self):
@@ -66,7 +69,7 @@ class Pin(object):
         self._callback = value
 
     @property
-    def direction(self):
+    def direction(self) -> str:
         """Pin direction."""
         return self._direction
 
@@ -76,17 +79,17 @@ class Pin(object):
         return self._number
 
     @property
-    def active_low(self):
+    def active_low(self) -> bool:
         """Active low."""
         return self._active_low
 
     def high(self):
-        """Set pin to HIGH logic setLevel."""
+        """Set pin to HIGH."""
         self._fd.write(SYSFS_GPIO_VALUE_HIGH)
         self._fd.seek(0)
 
     def low(self):
-        """Set pin to LOW logic setLevel."""
+        """Set pin to LOW."""
         self._fd.write(SYSFS_GPIO_VALUE_LOW)
         self._fd.seek(0)
 

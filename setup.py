@@ -4,14 +4,14 @@ from distutils.core import setup
 setup(
   name = 'pysysfs-gpio',
   packages = ['pysysfs'],
-  version = '0.11',
+  version = '0.12',
   license='MIT',
   description = 'Linux SysFS GPIO Access',
   author = 'Yuval Aboulafia',
   author_email = 'yuval.abou@gmail.com',
   url = 'https://github.com/yuvalabou/pysysfs-gpio',
-  download_url = 'https://github.com/yuvalabou/pysysfs-gpio/archive/refs/tags/0.11.tar.gz',
-  keywords = ['SOME', 'MEANINGFULL', 'KEYWORDS'],
+  download_url = 'https://github.com/yuvalabou/pysysfs-gpio/archive/refs/tags/0.12.tar.gz',
+  keywords = ['sysfs', 'gpio', 'armbian', 'nanopi'],
   install_requires=['Twisted'],
   classifiers=[
     'Development Status :: 3 - Alpha',
