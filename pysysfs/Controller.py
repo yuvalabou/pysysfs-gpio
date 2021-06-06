@@ -71,14 +71,14 @@ class Controller(object):
                 reactor.callFromThread(self._poll_queue_event, events)
 
     @property
-    def available_pins(self):
+    def available_pins(self) -> list:
         return self._available_pins
 
     @available_pins.setter
     def available_pins(self, value):
         self._available_pins = value
 
-    def stop(self):
+    def stop(self) -> None:
         self._running = False
 
         try:
@@ -132,7 +132,7 @@ class Controller(object):
     def _poll_queue_unregister_pin(self, pin):
         self._poll_queue.unregister(pin)
 
-    def dealloc_pin(self, number: int):
+    def dealloc_pin(self, number: int) -> None:
         """De-allocate pin."""
 
         Logger.debug("SysfsGPIO: dealloc_pin(%d)" % number)
@@ -218,7 +218,7 @@ class Controller(object):
         gpio_path = SYSFS_GPIO_PATH % number
         return path.isdir(gpio_path)
 
-    def _check_pin_validity(self, number: int):
+    def _check_pin_validity(self, number: int) -> None:
         """Check if pin number exists on this bus."""
 
         if number not in self._available_pins:

@@ -26,12 +26,12 @@ class Pin(object):
         number: int,
         direction: str,
         callback: Callable = None,
-        interrupt: str = None,
+        interrupt_edge: str = None,
         active_low: bool = False,
     ) -> None:
         """
-        @param callback: Method be called when pin changes state
-        @param interrpt: The edge transition that triggers callback
+        @param callback: Method to be called when a pin changes state
+        @param interrpt_egde: The edge transition that triggers callback
         """
         self._number = number
         self._direction = direction
@@ -40,15 +40,15 @@ class Pin(object):
 
         self._fd = open(self._sysfs_gpio_value_path(), "r+")
 
-        if callback and not interrupt:
-            raise Exception("You must supply an interrupt to trigger callback on")
+        if callback and not interrupt_edge:
+            raise Exception("You must supply an interrupt edge to trigger callback on")
 
         with open(self._sysfs_gpio_direction_path(), "w") as fs_dir:
             fs_dir.write(direction)
 
-        if interrupt:
-            with open(self._sysfs_gpio_edge_path(), "w") as fs_interrupt:
-                fs_interrupt.write(interrupt)
+        if interrupt_edge:
+            with open(self._sysfs_gpio_edge_path(), "w") as fs_edge:
+                fs_edge.write(interrupt_edge)
 
         if active_low:
             if active_low not in ACTIVE_LOW_MODES:
@@ -64,7 +64,7 @@ class Pin(object):
         return self._callback
 
     @callback.setter
-    def callback(self, value):
+    def callback(self, value) -> None:
         """Sets this pin callback."""
         self._callback = value
 
@@ -83,12 +83,12 @@ class Pin(object):
         """Active low."""
         return self._active_low
 
-    def high(self):
+    def high(self) -> None:
         """Set pin to HIGH."""
         self._fd.write(SYSFS_GPIO_VALUE_HIGH)
         self._fd.seek(0)
 
-    def low(self):
+    def low(self) -> None:
         """Set pin to LOW."""
         self._fd.write(SYSFS_GPIO_VALUE_LOW)
         self._fd.seek(0)
@@ -103,7 +103,7 @@ class Pin(object):
         """Get the file descriptor associated with this pin."""
         return self._fd.fileno()
 
-    def changed(self, state):
+    def changed(self, state) -> None:
         if callable(self._callback):
             self._callback(self.number, state)
 
